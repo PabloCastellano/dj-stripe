@@ -74,9 +74,12 @@ PaymentMethod = DjstripePaymentMethod
 
 
 class BankAccount(StripeModel):
+	stripe_class = stripe.BankAccount
+
 	account = models.ForeignKey(
 		"Account",
 		on_delete=models.PROTECT,
+		null=True,
 		related_name="bank_account",
 		help_text="The account the charge was made on behalf of. Null here indicates that this value was never set.",
 	)
