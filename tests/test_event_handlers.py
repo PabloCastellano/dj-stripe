@@ -357,6 +357,8 @@ class TestCustomerEvents(EventTestCase):
 
         sub = Subscription.objects.get(id=FAKE_SUBSCRIPTION["id"])
         self.assertEqual(sub.status, SubscriptionStatus.active)
+        self.assertIsNotNone(sub.lb_sub)
+        self.assertEqual(sub.lb_sub.is_enabled, True)
 
         subscription_retrieve_mock.return_value = deepcopy(FAKE_SUBSCRIPTION_CANCELED)
 
@@ -367,6 +369,8 @@ class TestCustomerEvents(EventTestCase):
         # Check that Subscription is canceled and not deleted
         self.assertEqual(sub.status, SubscriptionStatus.canceled)
         self.assertIsNotNone(sub.canceled_at)
+        self.assertIsNotNone(sub.lb_sub)
+        self.assertEqual(sub.lb_sub.is_enabled, False)
 
     @patch("stripe.Customer.retrieve", autospec=True)
     @patch("stripe.Event.retrieve", autospec=True)

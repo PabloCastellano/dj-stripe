@@ -51,6 +51,7 @@ class ChargeTest(AssertStripeFksMixin, TestCase):
             "djstripe.PaymentIntent.on_behalf_of",
             "djstripe.PaymentIntent.payment_method",
             "djstripe.Subscription.pending_setup_intent",
+            "djstripe.Subscription.lb_sub (related name)",
         }
 
     def test_str(self):
