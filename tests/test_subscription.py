@@ -42,6 +42,7 @@ class SubscriptionTest(AssertStripeFksMixin, TestCase):
             "djstripe.Customer.coupon",
             "djstripe.Customer.default_payment_method",
             "djstripe.Subscription.pending_setup_intent",
+            "djstripe.Subscription.lb_sub (related name)",
         }
 
     @patch("stripe.Plan.retrieve", return_value=deepcopy(FAKE_PLAN), autospec=True)

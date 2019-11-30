@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from stripe.error import InvalidRequestError
 
+from tests.apps.testapp.models import UserSubscription
+
 from djstripe.enums import SubscriptionStatus
 from djstripe.models import (
     Card,
@@ -991,3 +993,67 @@ class TestPaymentIntentEvents(EventTestCase):
                 ),
             )
         )
+
+
+class TestRelatedName(EventTestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(
+            username="pydanny", email="pydanny@gmail.com"
+        )
+        self.customer = FAKE_CUSTOMER.create_for_user(self.user)
+
+        self._create_us()
+
+    @patch("stripe.Plan.retrieve", return_value=deepcopy(FAKE_PLAN), autospec=True)
+    @patch(
+        "stripe.Subscription.retrieve",
+        return_value=deepcopy(FAKE_SUBSCRIPTION),
+        autospec=True,
+    )
+    @patch(
+        "stripe.Product.retrieve", return_value=deepcopy(FAKE_PRODUCT), autospec=True
+    )
+    @patch(
+        "stripe.Customer.retrieve", return_value=deepcopy(FAKE_CUSTOMER), autospec=True
+    )
+    def _create_us(
+        self,
+        customer_retrieve_mock,
+        product_retrieve_mock,
+        subscription_retrieve_mock,
+        plan_retrieve_mock,
+    ):
+        event = self._create_event(FAKE_EVENT_CUSTOMER_SUBSCRIPTION_CREATED)
+        event.invoke_webhook_handlers()
+
+        sub = Subscription.objects.get(id=FAKE_SUBSCRIPTION["id"])
+        self.assertEqual(sub.status, SubscriptionStatus.active)
+
+        self.us = UserSubscription.objects.create(stripe_subscription=sub)
+
+    @patch("stripe.Plan.retrieve", return_value=deepcopy(FAKE_PLAN), autospec=True)
+    @patch(
+        "stripe.Subscription.retrieve",
+        return_value=deepcopy(FAKE_SUBSCRIPTION_CANCELED),
+        autospec=True,
+    )
+    @patch(
+        "stripe.Product.retrieve", return_value=deepcopy(FAKE_PRODUCT), autospec=True
+    )
+    @patch(
+        "stripe.Customer.retrieve", return_value=deepcopy(FAKE_CUSTOMER), autospec=True
+    )
+    def test_related_name(
+        self,
+        customer_retrieve_mock,
+        product_retrieve_mock,
+        subscription_retrieve_mock,
+        plan_retrieve_mock,
+    ):
+        event = self._create_event(FAKE_EVENT_CUSTOMER_SUBSCRIPTION_DELETED)
+        event.invoke_webhook_handlers()
+
+        sub = Subscription.objects.get(id=FAKE_SUBSCRIPTION["id"])
+        # Check that it can access the reverse relation (related_name)
+        self.assertIsNotNone(sub.lb_sub)
+        self.assertEqual(sub.lb_sub.pk, 1)
