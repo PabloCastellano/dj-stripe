@@ -163,12 +163,27 @@
 
 ## PlanUsageType
 
-::: djstripe.enums.PlanUsageType
+::: djstripe.enums.PriceUsageType
     :members:
 
 ## PlanTiersMode
 
 ::: djstripe.enums.PlanTiersMode
+    :members:
+
+## PriceTiersMode
+
+::: djstripe.enums.PriceTiersMode
+    :members:
+
+## PriceUsageType
+
+::: djstripe.enums.PriceUsageType
+    :members:
+
+## PriceType
+
+::: djstripe.enums.PriceType
     :members:
 
 ## ProductType
