@@ -388,7 +388,6 @@ class BaseInvoice(StripeModel):
             "If the invoice has not been frozen yet, this will be null."
         ),
     )
-    # TODO: add items
     next_payment_attempt = StripeDateTimeField(
         null=True,
         blank=True,

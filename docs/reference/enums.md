@@ -163,7 +163,7 @@
 
 ## PlanUsageType
 
-::: djstripe.enums.PriceUsageType
+::: djstripe.enums.PlanUsageType
     :members:
 
 ## PlanTiersMode
