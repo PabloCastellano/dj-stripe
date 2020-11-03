@@ -127,9 +127,9 @@ class PriceTest(AssertStripeFksMixin, TestCase):
 
     def test_price_name(self):
         price = Price(id="price_xxxx", nickname="Price Test")
-        self.assertEqual(str(price), "Price Test")
+        assert str(price) == "Price Test"
         price.nickname = ""
-        self.assertEqual(str(price), "price_xxxx")
+        assert str(price) == "price_xxxx"
 
     @patch("stripe.Price.retrieve", return_value=FAKE_PRICE, autospec=True)
     def test_stripe_price(self, price_retrieve_mock):

@@ -3,6 +3,7 @@ Utility functions related to the djstripe app.
 """
 
 import datetime
+import warnings
 from typing import Optional
 
 from django.conf import settings
@@ -48,6 +49,13 @@ def subscriber_has_active_subscription(subscriber, price=None, plan=None):
     :param plan: The plan for which to check for an active subscription.
     :type plan: Plan or string (plan ID)
     """
+
+    if plan:
+        warnings.warn(
+            "the plan parameter is deprecated in favor or the price parameter and "
+            "will be removed in a future release",
+            DeprecationWarning,
+        )
 
     if price and plan:
         raise TypeError("price and plan arguments cannot both be defined.")
