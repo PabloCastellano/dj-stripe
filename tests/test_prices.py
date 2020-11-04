@@ -173,7 +173,7 @@ class PriceTest(AssertStripeFksMixin, TestCase):
         self.assertEqual(price.id, price_data["id"])
         self.assertIsNotNone(price.unit_amount)
         # XXX: When using USE_NATIVE_JSONFIELD=1, price.recurring is ""
-        self.assertEqual(price.recurring, None)
+        self.assertEqual(price.recurring, "" or None)
         self.assertEqual(price.type, PriceType.one_time)
 
         self.assert_fks(price, expected_blank_fks={"djstripe.Customer.coupon"})
